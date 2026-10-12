@@ -2,6 +2,8 @@
 
 Here's a look at a portion of the ocean system I've developed for a project I'm involved with, built on the Roblox engine. This snippet represents about 45% of the total ocean code, comprising roughly 2,000 lines out of a total of 4,250 (excluding comments). I've excluded elements responsible for the water's visual appearance, the core wave simulation, and the initialization code, meaning it won't function as a standalone piece. While I intend to keep the complete ocean system proprietary, **I'm more than willing to discuss it in detail during an interview.**
 
+https://github.com/user-attachments/assets/5db32e18-3d5b-4fb6-8e25-6f92687ddbca
+
 ## The idea
 
 The underlying concept was to create an ocean experience that is identical for every player, without requiring the server to broadcast wave data. Server resources are extremely valuable when accommodating numerous players on limited hardware. Therefore, the wave generation is entirely dependent on world position and the current time. Every machine reads the same shared clock and works out the same water on its own, so nothing needs to be synced. The primary hurdle in this project was ensuring this process is efficient enough to execute every frame on a player's local machine.
