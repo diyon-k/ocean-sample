@@ -17,7 +17,9 @@ The underlying concept was to create an ocean experience that is identical for e
 
 ![Wireframe of the ocean rings from above](media/lod-wireframe.png)
 
-*Wireframe from above: each ring doubles its cell size.*
+https://github.com/user-attachments/assets/323e6933-1573-411b-bd3e-c322c99f04ee
+
+*Wireframe from above: each ring doubles its cell size. The rings follow the player in whole-cell steps, so the water never slides.*
 
 ## A few key terms
 
