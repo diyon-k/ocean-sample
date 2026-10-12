@@ -15,6 +15,10 @@ The underlying concept was to create an ocean experience that is identical for e
 - **Caching instead of recomputing.** A vertex's values only depend on where it is in the world, so when the rings shift, most vertices can take their values from whichever vertex used to sit in that spot. Only the newly uncovered strip gets computed: about 9% of the mesh for a straight move and 17% for a diagonal one.
 - **Shorelines worked out automatically.** When the server starts, it measures the depth of the seabed once and shares it. From that, every machine knows where the land is, how far each point is from the shore and where the waves should break.
 
+![Wireframe of the ocean rings from above](media/lod-wireframe.png)
+
+*Wireframe from above: each ring doubles its cell size.*
+
 ## A few key terms
 
 You don't need to know Roblox to follow this, but a few engine terms come up:
