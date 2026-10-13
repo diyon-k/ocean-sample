@@ -2,6 +2,8 @@
 
 Here's a look at a portion of the ocean system I've developed for a project I'm involved with, built on the Roblox engine. This snippet represents about 45% of the total ocean code, comprising roughly 2,000 lines out of a total of 4,250 (excluding comments). I've excluded elements responsible for the water's visual appearance, the core wave simulation, and the initialization code, meaning it won't function as a standalone piece. While I intend to keep the complete ocean system proprietary, **I'm more than willing to discuss it in detail during an interview.**
 
+**In short:** a deterministic ocean renderer with a camera-following clipmap mesh that recomputes only 9-17% of its vertices per grid shift, waves computed on every client with no per-frame network traffic, and automatic shoreline detection.
+
 https://github.com/user-attachments/assets/5db32e18-3d5b-4fb6-8e25-6f92687ddbca
 
 ## The idea
@@ -20,6 +22,17 @@ The underlying concept was to create an ocean experience that is identical for e
 https://github.com/user-attachments/assets/323e6933-1573-411b-bd3e-c322c99f04ee
 
 *Wireframe from above: each ring doubles its cell size. The rings follow the player in whole-cell steps, so the water never slides.*
+
+## By the numbers
+
+- **4 rings**, with cells of 4, 8, 16 and 32 studs, covering 1,920 × 1,920 studs around the camera.
+- **8,705 vertices** in the water mesh.
+- **30, 15, 10 and 6 updates per second**, from the innermost ring outwards.
+- **About 9% of vertices recomputed** when the rings shift one grid step (32 studs) in a straight line, and **about 17%** diagonally, instead of all of them.
+- **Over half of the rings skipped** on most updates when they're outside the camera's view.
+- **A 64 × 64 wave field**, plus a 16 × 16 low-resolution copy for the outer rings, tiling every 512 studs and stepping 20 times per second.
+- **A 2 ms per-frame cap** on the simulation and shading work, so slower machines lower the simulation rate instead of stuttering.
+- **No per-frame network traffic** for the waves. The only network use is the seabed depth grid (one byte per 8 × 8-stud cell), sent once when a player joins.
 
 ## A few key terms
 
