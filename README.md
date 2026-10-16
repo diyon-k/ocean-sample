@@ -1,14 +1,12 @@
 # Ocean Sample
 
-Here's a look at a portion of the ocean system I've developed for a project I'm involved with, built on the Roblox engine. This snippet represents about 45% of the total ocean code, comprising roughly 2,000 lines out of a total of 4,250 (excluding comments). I've excluded elements responsible for the water's visual appearance, the core wave simulation, and the initialization code, meaning it won't function as a standalone piece. While I intend to keep the complete ocean system proprietary, **I'm more than willing to discuss it in detail during an interview.**
-
-**In short:** a deterministic ocean renderer with a camera-following clipmap mesh that recomputes only 9-17% of its vertices per grid shift, waves computed on every client with no per-frame network traffic, and automatic shoreline detection.
+A real-time ocean rendering + simulation system coded in Luau; a camera-following clipmap mesh that recomputes only 9-17% of vertices per grid shift, deterministic waves computed independently on every client to avoid using server resources by using a shared clock allowing for zero per-frame network traffic. This sample is ~2000 out of 4250 lines - the shading layer and the purchased FFT core are omitted. I intend to keep the complete system proprietary, but **I am very willing to discuss the full build (or just the sample) in detail during an interview.**
 
 https://github.com/user-attachments/assets/5db32e18-3d5b-4fb6-8e25-6f92687ddbca
 
 ## The idea
 
-The underlying concept was to create an ocean experience that is identical for every player, without requiring the server to broadcast wave data. Server resources are extremely valuable when accommodating numerous players on limited hardware. Therefore, the wave generation is entirely dependent on world position and the current time. Every machine reads the same shared clock and works out the same water on its own, so nothing needs to be synced. The primary hurdle in this project was ensuring this process is efficient enough to execute every frame on a player's local machine.
+The underlying concept was to create an ocean experience that is identical for every user, without requiring the server to broadcast wave data. Server resources are extremely valuable when accommodating many concurrent users on limited hardware. Therefore, the wave generation is entirely dependent on world position and the current time. Every machine reads the same shared clock and works out the same water on its own, so nothing needs to be synced. The primary hurdle in this project was ensuring this process is efficient enough to execute every frame on each client.
 
 ## What it does
 
@@ -21,7 +19,7 @@ The underlying concept was to create an ocean experience that is identical for e
 
 https://github.com/user-attachments/assets/323e6933-1573-411b-bd3e-c322c99f04ee
 
-*Wireframe from above: each ring doubles its cell size. The rings follow the player in whole-cell steps, so the water never slides.*
+*Wireframe from above: each ring doubles its cell size. The rings follow the camera in whole-cell steps, so the water never slides.*
 
 ## By the numbers
 
@@ -31,15 +29,15 @@ https://github.com/user-attachments/assets/323e6933-1573-411b-bd3e-c322c99f04ee
 - **About 9% of vertices recomputed** when the rings shift one grid step (32 studs) in a straight line, and **about 17%** diagonally, instead of all of them.
 - **Over half of the rings skipped** on most updates when they're outside the camera's view.
 - **A 64 × 64 wave field**, plus a 16 × 16 low-resolution copy for the outer rings, tiling every 512 studs and stepping 20 times per second.
-- **A 2 ms per-frame cap** on the simulation and shading work, so slower machines lower the simulation rate instead of stuttering.
-- **No per-frame network traffic** for the waves. The only network use is the seabed depth grid (one byte per 8 × 8-stud cell), sent once when a player joins.
+- **~1.7 ms per frame measured** (MicroProfiler, [DEVICE]). Simulation and shading bursts are held under a 2 ms per-frame budget, so slower machines lower the simulation rate instead of stuttering.
+- **No per-frame network traffic** for the waves. The only network use is the seabed depth grid (one byte per 8 × 8-stud cell), sent once when a client joins.
 
 ## A few key terms
 
-You don't need to know Roblox to follow this, but a few engine terms come up:
+The system runs on the Roblox engine, for a project I'm involved with. You don't need to know Roblox to follow this, but a few engine terms come up:
 
-- **Server and client:** the game runs on one server and on each player's machine (a client). Everything visual runs on the clients.
-- **Replication:** Roblox automatically copies objects the server creates to every client. This is how the depth data reaches players without any custom networking.
+- **Server and client:** the system runs on one server and on each user's machine (a client). Everything visual runs on the clients.
+- **Replication:** Roblox automatically copies objects the server creates to every client. This is how the depth data reaches clients without any custom networking.
 - **Part, tag and attribute:** a part is a basic 3D block placed in the level. A tag is a label on an object (e.g. `Ocean`) that code can look up, and an attribute is a named value stored on an object.
 - **Raycast:** firing an invisible line from a point in a direction and getting back the first thing it hits. Here it is used to find the seabed.
 - **EditableMesh:** a Roblox mesh whose vertices can be moved from code every frame. The water surface is one of these.
@@ -73,7 +71,7 @@ ocean-sample/
       OceanDepthField.lua     the depth grid: water depth, distance to shore, "is this land?"
       OceanZones.lua          tagged parts that make waves bigger or smaller in an area
       OceanGerstner.lua       a classic wave formula, only used to size the mesh's bounds when it is built
-  Client/                     runs on each player's machine
+  Client/                     runs on each client
     OceanRenderer/
       init.lua                the renderer: owns the mesh and rings, follows the camera, schedules work each frame
       OceanMesh.lua           builds the triangle layout (centre patch + rings)
