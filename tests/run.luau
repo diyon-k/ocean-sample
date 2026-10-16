@@ -11,6 +11,8 @@ local process = require("@lune/process")
 local Harness = require("./harness")
 
 require("./depthcodec.spec")
+require("./permute.spec")
+require("./misscount.spec")
 
 local results = Harness.results()
 print(`\n{results.Passed} passed, {#results.Failed} failed`)

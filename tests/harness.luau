@@ -23,8 +23,6 @@ local SHARED_PATHS = {
 	OceanRebuild = "Client/OceanRenderer/OceanRebuild",
 }
 
-local hostEnv = getfenv(1)
-
 local debugLib = setmetatable({
 	profilebegin = function() end,
 	profileend = function() end,
@@ -112,7 +110,7 @@ function Harness.newWorld(options: WorldOptions?)
 		_modules = opts.Modules or {},
 	}, World)
 
-	world._globals = setmetatable({
+	world._globals = {
 		debug = debugLib,
 		Vector3 = roblox.Vector3,
 		Vector2 = roblox.Vector2,
@@ -134,7 +132,7 @@ function Harness.newWorld(options: WorldOptions?)
 			end
 			return world:Require(assert(SHARED_PATHS[name], `shared: unknown module {name}`))
 		end,
-	}, { __index = hostEnv })
+	}
 
 	return world
 end
@@ -153,13 +151,14 @@ function World:Require(path: string)
 	end
 
 	local file = assert(resolveFile(path), `no module at {path}`)
-	local env = setmetatable({
-		script = newNode(self, path),
-		require = function(target)
-			assert(getmetatable(target) == Node, "require expects a script reference")
-			return self:Require(rawget(target, "_path"))
-		end,
-	}, { __index = self._globals })
+	-- Plain fields, not __index: luau.load sets the environment's metatable to
+	-- its own globals, which would hide anything provided through a metatable.
+	local env = table.clone(self._globals)
+	env.script = newNode(self, path)
+	env.require = function(target)
+		assert(getmetatable(target) == Node, "require expects a script reference")
+		return self:Require(rawget(target, "_path"))
+	end
 
 	local chunk = luau.load(fs.readFile(file), { debugName = file, environment = env })
 	local result = chunk()
