@@ -31,7 +31,7 @@ https://github.com/user-attachments/assets/323e6933-1573-411b-bd3e-c322c99f04ee
 - **About 9% of vertices recomputed** when the rings shift one grid step (32 studs) in a straight line, and **about 17%** diagonally, instead of all of them.
 - **Over half of the rings skipped** on most updates when they're outside the camera's view.
 - **A 64 × 64 wave field**, plus a 16 × 16 low-resolution copy for the outer rings, tiling every 512 studs and stepping 20 times per second.
-- **~1.7 ms per frame measured** (MicroProfiler, [DEVICE]). Simulation and shading bursts are held under a 2 ms per-frame budget, so slower machines lower the simulation rate instead of stuttering.
+- **~1.7 ms per frame measured** (MicroProfiler). Simulation and shading bursts are held under a 2 ms per-frame budget, so slower machines lower the simulation rate instead of stuttering.
 - **No per-frame network traffic** for the waves. The only network use is the seabed depth grid (one byte per 8 × 8-stud cell), sent once when a client joins.
 
 ## A few key terms
