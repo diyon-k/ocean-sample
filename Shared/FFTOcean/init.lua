@@ -5,7 +5,7 @@
 --
 --	STUB. The shipped version is a Tessendorf FFT simulation that is not
 --	included here. This keeps the interface the renderer and OceanWaves
---	consume, and outputs a flat field so everything runs out of the box.
+--	consume and outputs a flat field.
 --	Plug your own wave field into computeField.
 --
 --	Field buffers are complex-interleaved f32, 8 bytes per cell, row-major

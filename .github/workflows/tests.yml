@@ -1,0 +1,23 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      LUNE_VERSION: 0.11.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Lune
+        run: |
+          curl -sSfL -o lune.zip "https://github.com/lune-org/lune/releases/download/v${LUNE_VERSION}/lune-${LUNE_VERSION}-linux-x86_64.zip"
+          unzip -q lune.zip -d "$HOME/.lune"
+          chmod +x "$HOME/.lune/lune"
+          echo "$HOME/.lune" >> "$GITHUB_PATH"
+
+      - name: Run tests
+        run: lune run tests/run
