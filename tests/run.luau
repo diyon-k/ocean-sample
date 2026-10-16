@@ -13,6 +13,7 @@ local Harness = require("./harness")
 require("./depthcodec.spec")
 require("./permute.spec")
 require("./misscount.spec")
+require("./determinism.spec")
 
 local results = Harness.results()
 print(`\n{results.Passed} passed, {#results.Failed} failed`)
