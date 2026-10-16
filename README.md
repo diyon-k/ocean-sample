@@ -1,5 +1,7 @@
 # Ocean Sample
 
+[![tests](https://github.com/diyon-k/ocean-sample/actions/workflows/tests.yml/badge.svg)](https://github.com/diyon-k/ocean-sample/actions/workflows/tests.yml)
+
 A real-time ocean rendering + simulation system coded in Luau; a camera-following clipmap mesh that recomputes only 9-17% of vertices per grid shift, deterministic waves computed independently on every client to avoid using server resources by using a shared clock allowing for zero per-frame network traffic. This sample is ~2000 out of 4250 lines - the shading layer and the purchased FFT core are omitted. I intend to keep the complete system proprietary, but **I am very willing to discuss the full build (or just the sample) in detail during an interview.**
 
 https://github.com/user-attachments/assets/5db32e18-3d5b-4fb6-8e25-6f92687ddbca
@@ -138,6 +140,24 @@ flowchart TD
 1. Within a time budget, the wave simulation moves forward a step if one is due.
 2. The rings follow the camera. When the camera crosses a grid cell the rings shift by one cell, and `OceanRebuild` copies each vertex's fixed values over from whichever vertex used to sit on that world position, so only the new strip is computed.
 3. Each ring, at its own rate, takes a frozen copy of the wave field so it never mixes two moments in time. The look layer (not included) then writes positions, normals and colours to the mesh, spread across several frames.
+
+## Running the tests
+
+The tests run outside Roblox with [Lune](https://github.com/lune-org/lune), against the real modules, unchanged. A small harness (`tests/harness.luau`) stands in for the engine, and since `OceanTuning` isn't in this repo, the renderer tests use a stand-in that copies the shipped ring layout.
+
+1. Install Lune 0.11.0, e.g. with Aftman: `aftman add --global lune-org/lune@0.11.0`, or from the [releases page](https://github.com/lune-org/lune/releases/tag/v0.11.0).
+2. From the repo root, run:
+
+```
+lune run tests/run
+```
+
+They also run automatically on every push and pull request through GitHub Actions. What they check:
+
+- **Depth codec:** every grid survives encode -> decode byte for byte, and malformed input returns nothing instead of a wrong grid.
+- **Caching:** after a grid shift, the cached rebuild (`Permute` + `RunIndices`) gives exactly the same values as rebuilding every vertex, including after a teleport.
+- **The numbers above:** 8,705 vertices, with 8.98% re-baked on a straight shift and 16.75% on a diagonal one, measured on the real ring layout.
+- **Determinism:** a server and two clients, given only the encoded depth grid, compute identical water at every point and time.
 
 ## What's left out
 
