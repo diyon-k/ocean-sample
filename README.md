@@ -2,7 +2,7 @@
 
 [![tests](https://github.com/diyon-k/ocean-sample/actions/workflows/tests.yml/badge.svg)](https://github.com/diyon-k/ocean-sample/actions/workflows/tests.yml)
 
-A real-time ocean rendering + simulation system coded in Luau; a camera-following clipmap mesh that recomputes only 9-17% of vertices per grid shift, deterministic waves computed independently on every client to avoid using server resources by using a shared clock allowing for zero per-frame network traffic. This sample is ~2000 out of 4250 lines - the shading layer and the purchased FFT core are omitted. I intend to keep the complete system proprietary, but **I am very willing to discuss the full build (or just the sample) in detail during an interview.**
+A real-time ocean rendering and simulation system in Luau: a camera-following clipmap mesh that recomputes only 9–17% of vertices per grid shift, deterministic waves computed independently on every client from a shared clock (zero per-frame network traffic), and automatic shoreline detection from a one-time seabed depth bake.
 
 https://github.com/user-attachments/assets/5db32e18-3d5b-4fb6-8e25-6f92687ddbca
 
