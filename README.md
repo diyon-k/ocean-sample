@@ -4,6 +4,8 @@
 
 A real-time ocean rendering and simulation system in Luau: a camera-following clipmap mesh that recomputes only 9–17% of vertices per grid shift, deterministic waves computed independently on every client from a shared clock (zero per-frame network traffic), and automatic shoreline detection from a one-time seabed depth bake.
 
+This sample is ~2,000 of ~4,250 lines; the shading layer and the purchased FFT core are omitted. I intend to keep the complete system proprietary, but **I am very willing to discuss the full build (or just the sample) in detail during an interview.**
+
 https://github.com/user-attachments/assets/5db32e18-3d5b-4fb6-8e25-6f92687ddbca
 
 ## The idea
